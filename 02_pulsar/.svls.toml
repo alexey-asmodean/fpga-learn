@@ -1,5 +1,2 @@
-[verilog]
-include_paths = ["./02_pulsar"]
-
 [option]
 linter = true
