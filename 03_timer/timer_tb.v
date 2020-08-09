@@ -29,6 +29,8 @@ timer #(1) timer(
 initial begin
     $dumpfile("timer.vcd");
     $dumpvars();
+    #20 start = 1'b1;
+    #20 start = 1'b0;
     #20 minus = 1'b1;
     #40 minus = 1'b0; plus = 1'b1;
     #20 plus = 1'b0; start = 1'b1;

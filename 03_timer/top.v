@@ -58,7 +58,7 @@ timer timer(
     .display(data)
 );
 
-beeper beeper(CLK, finish, beep);
+beeper beeper(clk, finish, beep);
 assign BP1 = ~beep;
 
 endmodule

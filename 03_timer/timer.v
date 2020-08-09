@@ -16,6 +16,7 @@ reg [3:0] min_hi = 4'b0;
 reg [3:0] min_lo = 4'b0;
 reg [2:0] sec_hi = 3'b0;
 reg [3:0] sec_lo = 4'b0;
+reg paused = 1'b0;
 
 assign display = {min_hi, min_lo, 1'b0, sec_hi, sec_lo};
 assign finish = run_mode & is_min;
@@ -51,12 +52,16 @@ always @(posedge clk) begin
         sec_hi <= 3'd0;
         min_lo <= 4'd0;
         min_hi <= 4'd0;
-    end else if (start & !run_mode) begin
+        paused <= 1'b0;
+    end else if (start & !run_mode & !is_min) begin
         run_mode <= 1'b1;
     end else if (start & run_mode) begin
-        run_mode <= 1'b1;
+        if (paused)
+            paused <= 1'b0;
+        else
+            paused <= 1'b1;
     end else begin
-        if (run_mode)
+        if (run_mode & !paused)
             fracts <= fracts + 1'b1;
 
         if (sec_lo_down)
