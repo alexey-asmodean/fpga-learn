@@ -1,3 +1,6 @@
+`include "counter.v"
+`include "setup.v"
+
 module timer #(
     parameter DIV=9
 ) (
@@ -11,76 +14,52 @@ module timer #(
 );
 
 reg run_mode = 1'b0;
-reg [DIV-1:0] fracts = 1'b0;
-reg [3:0] min_hi = 4'b0;
-reg [3:0] min_lo = 4'b0;
-reg [2:0] sec_hi = 3'b0;
-reg [3:0] sec_lo = 4'b0;
 reg paused = 1'b0;
+wire [3:0] setup_hi;
+wire [3:0] setup_lo;
+wire setup_seconds;
+wire [3:0] min_hi;
+wire [3:0] min_lo;
+wire [2:0] sec_hi;
+wire [3:0] sec_lo;
 
-assign display = {min_hi, min_lo, 1'b0, sec_hi, sec_lo};
-assign finish = run_mode & is_min;
+counter #(DIV) counter(
+    .clk(clk),
+    .enabled(run_mode),
+    .paused(paused),
+    .hi(setup_hi),
+    .lo(setup_lo),
+    .seconds(setup_seconds),
+    .min_hi(min_hi),
+    .min_lo(min_lo),
+    .sec_hi(sec_hi),
+    .sec_lo(sec_lo)
+);
 
-wire plus_strobe = !run_mode & ! is_max & plus;
-wire minus_strobe = !run_mode & !is_min & minus;
+setup setup(
+    .clk(clk),
+    .plus(plus & !run_mode),
+    .minus(minus & !run_mode),
+    .reset(finish | (reset & !run_mode)),
+    .hi(setup_hi),
+    .lo(setup_lo),
+    .seconds(setup_seconds)
+);
 
-wire fracts_overflow = fracts == {DIV{1'b1}};
-wire sec_lo_borrow = sec_lo == 4'd0;
-wire sec_hi_borrow = sec_hi == 3'd0;
-wire min_lo_borrow = min_lo == 4'd0;
-wire min_hi_borrow = min_hi == 4'd0;
-wire is_min = sec_lo_borrow & sec_hi_borrow & min_lo_borrow & min_hi_borrow;
+assign display = run_mode ? {min_hi, min_lo, 1'b0, sec_hi, sec_lo}
+                          : {setup_hi, setup_lo, setup_seconds ? 4'd3 : 4'd0, 4'd0 };
 
-wire sec_lo_down = run_mode & fracts_overflow;
-wire sec_hi_down = sec_lo_down & sec_lo_borrow;
-wire min_lo_down = (minus_strobe | sec_hi_down) & sec_hi_borrow;
-wire min_hi_down = min_lo_down & min_lo_borrow;
-
-wire sec_hi_carry = sec_hi == 3'd3;
-wire min_lo_carry = min_lo == 4'd9;
-wire min_hi_carry = min_hi == 4'd9;
-wire is_max = min_lo_carry & min_hi_carry & sec_hi == 3'd3;
-
-wire sec_hi_ch = minus_strobe | plus_strobe;
-wire min_lo_up = plus_strobe & sec_hi_carry;
-wire min_hi_up = min_lo_up & min_lo_carry;
+assign finish = run_mode & min_hi == 4'd0 & min_lo == 4'd0 & sec_hi == 3'd0 & sec_lo == 4'd0;
 
 always @(posedge clk) begin
-    if (finish || reset) begin
+    if (reset | finish) begin
         run_mode <= 1'b0;
-        sec_lo <= 4'd0;
-        sec_hi <= 3'd0;
-        min_lo <= 4'd0;
-        min_hi <= 4'd0;
         paused <= 1'b0;
-    end else if (start & !run_mode & !is_min) begin
-        run_mode <= 1'b1;
     end else if (start & run_mode) begin
-        if (paused)
-            paused <= 1'b0;
-        else
-            paused <= 1'b1;
-    end else begin
-        if (run_mode & !paused)
-            fracts <= fracts + 1'b1;
-
-        if (sec_lo_down)
-            sec_lo <= sec_lo_borrow ? 4'd9 : sec_lo - 1'b1;
-
-        if (sec_hi_down)
-            sec_hi <= sec_hi_borrow ? 3'd5 : sec_hi - 1'b1;
-        else if (sec_hi_ch)
-            sec_hi <= sec_hi_carry ? 3'd0 : 3'd3;
-
-        if (min_lo_down)
-            min_lo <= min_lo_borrow ? 4'd9 : min_lo - 1'b1;
-        else if (min_lo_up)
-            min_lo <= min_lo_carry ? 4'd0 : min_lo + 1'b1;
-
-        if (min_hi_down)
-            min_hi <= min_hi - 1'b1;
-        else if (min_hi_up)
-            min_hi <= min_hi + 1'b1;
+        paused <= ~paused;
+    end else if (start & (setup_hi != 4'd0 | setup_lo != 4'd0 | setup_seconds)) begin
+        run_mode <= 1'b1;
+        paused <= 1'b0;
     end
 end
 

@@ -1,4 +1,4 @@
-ITEMS := debounce display sync timer beeper
+ITEMS := debounce display sync beeper counter setup timer
 CONTAINER := quartus
 PROJECT := top
 
@@ -6,7 +6,7 @@ SOURCES := *.v
 VVP := $(patsubst %,output/%,$(ITEMS))
 WAVES := $(patsubst %,output/%.vcd,$(ITEMS))
 
-.PHONY: all flash firmware waves clean
+.PHONY: all flash firmware waves clean quartus
 
 all: firmware waves
 
@@ -38,3 +38,10 @@ output:
 
 clean: output
 	rm -rf output
+
+quartus:
+	docker start $(CONTAINER)
+	docker exec -t $(CONTAINER) rm -rf /build
+	docker cp . $(CONTAINER):/build/
+	docker exec -t $(CONTAINER) quartus_wrapper /opt/intelFPGA_lite/19.1/quartus/bin/quartus /build/top.qpf
+	docker stop $(CONTAINER)
