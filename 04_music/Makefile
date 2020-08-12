@@ -1,4 +1,4 @@
-ITEMS := debounce display sync beeper counter setup timer
+ITEMS := beeper delay sequencer top
 CONTAINER := quartus
 PROJECT := top
 
@@ -27,11 +27,11 @@ output/firmware.svf: $(SOURCES) output
 	touch $@
 
 $(WAVES): output/%.vcd: output/%
-	$<;
-	mv ./$(patsubst output/%,%.vcd,$^) $@
+	@$<;
+	@mv ./$(patsubst output/%,%.vcd,$^) $@
 
 $(VVP): output/%: %_tb.v $(SOURCES) output
-	iverilog -g2009 -o $@ $<
+	@iverilog -g2009 -o $@ $<
 
 output:
 	mkdir output
