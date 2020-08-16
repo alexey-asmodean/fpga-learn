@@ -1,4 +1,4 @@
-ITEMS := beeper delay sequencer top
+ITEMS := beeper delay sequencer synthesizer top
 CONTAINER := quartus
 PROJECT := top
 
@@ -15,7 +15,7 @@ waves: $(WAVES)
 flash: firmware
 	openocd -f interface/altera-usb-blaster.cfg -c "init" -c "svf output/firmware.svf" -c "shutdown"
 
-firmware: output/firmware.svf
+firmware: output/samples.txt output/firmware.svf
 
 output/firmware.svf: $(SOURCES) output
 	docker start $(CONTAINER)
@@ -30,8 +30,11 @@ $(WAVES): output/%.vcd: output/%
 	@$<;
 	@mv ./$(patsubst output/%,%.vcd,$^) $@
 
-$(VVP): output/%: %_tb.v $(SOURCES) output
+$(VVP): output/%: %_tb.v $(SOURCES) output/samples.txt output
 	@iverilog -g2009 -o $@ $<
+
+output/samples.txt: samples.py output
+	@python3 samples.py
 
 output:
 	mkdir output

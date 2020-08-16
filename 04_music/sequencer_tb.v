@@ -12,7 +12,7 @@ reg [11:0] command = 12'h43f;
 wire busy;
 wire q;
 
-sequencer #(1, 512) sequencer(clk, command, busy, q);
+sequencer #(1, 512) sequencer(clk, 1'b0, command, busy, q);
 
 initial begin
     $dumpfile("sequencer.vcd");

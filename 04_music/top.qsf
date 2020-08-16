@@ -151,3 +151,4 @@ set_location_assignment PIN_69 -to SDRAM_A7
 set_location_assignment PIN_70 -to SDRAM_A6
 set_location_assignment PIN_71 -to SDRAM_A5
 set_location_assignment PIN_72 -to SDRAM_A4
+set_location_assignment PIN_99 -to BP2

@@ -1,6 +1,7 @@
 module delay #(
     parameter PREDIV = 93750, // 512 hz for delays
-    parameter WIDTH = 11) (
+    parameter WIDTH = 11
+) (
     input clk,
     input [WIDTH-1:0] duration,
     input enabled,

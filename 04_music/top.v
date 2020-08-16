@@ -4,37 +4,40 @@
 module top (
     input CLK,
     input S1,
+    input S2,
     output DS_D,
     output DS_C,
     output DS_G,
     output DS_DP,
-    output BP1
+    output BP2
 );
 
-parameter ADDR = 8;
+localparam ADDR = 8;
 
 wire [11:0] command;
 reg [ADDR-1:0] cnt = {ADDR{1'b0}};
 reg playing = 1'b0;
 reg [1:0] lights = 2'b0;
 reg on_light = 1'b0;
+reg mode = 1'b0;
 wire busy;
 wire q;
 wire signed [7:0] wave;
 
 song song (CLK, cnt, command);
-sequencer sequencer(CLK, command, busy, q);
+sequencer sequencer(CLK, mode, command, busy, q);
 
-assign BP1 = ~q;
+assign BP2 = ~q;
 assign DS_D = ~on_light | lights != 2'd0;
 assign DS_C = ~on_light | lights != 2'd1;
 assign DS_G = ~on_light | lights != 2'd2;
 assign DS_DP = ~on_light | lights != 2'd3;
 
 always @(posedge CLK) begin
-    if (~S1 & !playing) begin
+    if ((~S1 | ~S2) & !playing) begin
         playing <= 1'b1;
-        cnt <= {ADDR{1'b0}};
+        cnt <= 8'b0;
+        mode <= S1;
     end else if (command == 12'hfff) begin
         playing <= 1'b0;
     end else if (playing & ~busy) begin
