@@ -2,7 +2,7 @@
 
 module samples #(
     parameter LENGTH = `SAMPLES_LENGTH,
-    parameter WIDTH = 8,
+    parameter WIDTH = 20,
     parameter ADDR = $clog2(LENGTH)
 ) (
     input clk,

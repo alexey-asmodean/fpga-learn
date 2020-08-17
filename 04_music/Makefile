@@ -1,4 +1,4 @@
-ITEMS := beeper delay sequencer synthesizer top
+ITEMS := beeper delay sequencer synthesizer top decoder
 CONTAINER := quartus
 PROJECT := top
 
