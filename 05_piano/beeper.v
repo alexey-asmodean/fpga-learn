@@ -1,5 +1,5 @@
 module beeper #(
-	parameter WIDTH
+	parameter WIDTH=32
 ) (
 	input clk,
 	input enable,

@@ -58,8 +58,6 @@ set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name TIMING_ANALYZER_MULTICORNER_ANALYSIS ON
 set_global_assignment -name NUM_PARALLEL_PROCESSORS ALL
 set_global_assignment -name SDC_FILE top.sdc
-set_global_assignment -name VERILOG_FILE beeper.v
-set_global_assignment -name VERILOG_FILE selector.v
 set_location_assignment PIN_99 -to q
 set_location_assignment PIN_91 -to s2
 set_location_assignment PIN_90 -to s3

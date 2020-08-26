@@ -1,6 +1,6 @@
 module selector #(
-	parameter INPUT,
-	parameter WIDTH
+	parameter INPUT = 48000000,
+	parameter WIDTH = $clog2(INPUT / 262 / 2 - 1)
 ) (
 	input a,
 	input g,

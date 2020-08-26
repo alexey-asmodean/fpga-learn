@@ -1,3 +1,6 @@
+`include "beeper.v"
+`include "selector.v"
+
 module top(
 	input clk,
 	input s1,
