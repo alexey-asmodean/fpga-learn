@@ -7,7 +7,7 @@ reg clk = 1'b0;
 always #10 clk = ~clk;
 
 reg enable = 1'b0;
-reg [1:0] tone = 7'h3;
+reg [1:0] tone = 2'd3;
 wire q;
 
 beeper #(2) beeper(clk, enable, tone, q);
