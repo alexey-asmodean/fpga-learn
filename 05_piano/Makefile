@@ -7,9 +7,9 @@ TB_VVP := $(patsubst %_tb.v,output_files/%.vvp,$(TESTBENCHES))
 TB_VCD := $(patsubst %_tb.v,output_files/%.vcd,$(TESTBENCHES))
 
 ifeq ($(PROJECT),max)
-	FIRM_EXT := ".pof"
+	FIRM_EXT := .pof
 else
-	FIRM_EXT := ".sof"
+	FIRM_EXT := .sof
 endif
 
 ifeq ($(CONTAINER),)
