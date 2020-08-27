@@ -62,7 +62,7 @@ output_files:
 
 clean:
 ifeq ($(OS), Windows_NT)
-	rmdir /F /Q output_files
+	rmdir /S /Q output_files || echo 0
 else
 	rm -rf output_files
 endif

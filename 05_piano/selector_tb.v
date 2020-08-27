@@ -3,7 +3,7 @@
 
 module selector_tb();
 
-reg [3:0] keys = 4'b0;
+reg [3:0] keys = 4'd0;
 always #20 keys += 1'b1;
 wire [4:0] tone;
 
@@ -11,9 +11,9 @@ selector #(10000) selector(keys[0], keys[1], keys[2], keys[3], tone);
 
 initial begin
     $dumpfile("selector.vcd");
-    $dumpvars();
+    $dumpvars;
     wait(keys == 4'b1111);
-    #20 $finish();
-end
+    #20 $finish;
+end 
 
 endmodule
